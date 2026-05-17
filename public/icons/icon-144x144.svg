@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e55520;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="15" fill="url(#bg)"/>
+  <!-- Plate -->
+  <circle cx="50" cy="52" r="28" fill="white" opacity="0.95"/>
+  <circle cx="50" cy="52" r="22" fill="none" stroke="#ff6b35" stroke-width="2" opacity="0.3"/>
+  <!-- Fork -->
+  <line x1="36" y1="35" x2="36" y2="70" stroke="#ff6b35" stroke-width="3" stroke-linecap="round"/>
+  <line x1="32" y1="35" x2="32" y2="48" stroke="#ff6b35" stroke-width="2" stroke-linecap="round"/>
+  <line x1="40" y1="35" x2="40" y2="48" stroke="#ff6b35" stroke-width="2" stroke-linecap="round"/>
+  <!-- Spoon -->
+  <line x1="64" y1="50" x2="64" y2="70" stroke="#ff6b35" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="64" cy="43" rx="5" ry="8" fill="#ff6b35" opacity="0.9"/>
+  <!-- Steam lines -->
+  <path d="M44 28 Q46 22 44 16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M50 25 Q52 19 50 13" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M56 28 Q58 22 56 16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+</svg>
