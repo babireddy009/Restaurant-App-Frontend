@@ -20,7 +20,9 @@ export default function DeliveryChat({ orderId, driverName, driverPhone, onClose
     const token = localStorage.getItem('access_token');
     if (!token) return;
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+    let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+    if (apiUrl.endsWith('/')) apiUrl = apiUrl.slice(0, -1);
+    if (!apiUrl.endsWith('/api')) apiUrl += '/api';
     const wsDomain = new URL(apiUrl).host; // Extracts e.g., 'localhost:8000' or 'api.render.com'
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${wsProtocol}//${wsDomain}/ws/chat/order/${orderId}/?token=${token}`;

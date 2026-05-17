@@ -20,7 +20,9 @@ function resolveImage(imagePath) {
   // Frontend public folder images (start with /images/)
   if (imagePath.startsWith('/images/')) return imagePath;
   // Django media upload paths
-  const apiBase = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:8000';
+  let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  if (apiBase.endsWith('/')) apiBase = apiBase.slice(0, -1);
+  if (apiBase.endsWith('/api')) apiBase = apiBase.replace('/api', '');
   return `${apiBase}${imagePath}`;
 }
 
