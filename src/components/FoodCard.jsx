@@ -12,19 +12,17 @@ const CATEGORY_EMOJI = {
 };
 
 // Resolves image path to a full URL the browser can load
-// Backend stores paths like '/images/chicken_biryani.png'
-// Vite frontend serves these from http://localhost:5173/images/
 function resolveImage(imagePath) {
   if (!imagePath) return null;
-  if (imagePath.startsWith('http')) return imagePath;  // absolute URL
-  // Frontend public folder images (start with /images/)
-  if (imagePath.startsWith('/images/')) return imagePath;
-  // Django media upload paths
-  let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  if (imagePath.startsWith('http')) return imagePath;         // absolute URL
+  if (imagePath.startsWith('/images/')) return imagePath;     // frontend public folder — served by Vercel as-is
+  // Django media upload paths — prefix with backend base URL
+  let apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
   if (apiBase.endsWith('/')) apiBase = apiBase.slice(0, -1);
-  if (apiBase.endsWith('/api')) apiBase = apiBase.replace('/api', '');
+  if (apiBase.endsWith('/api')) apiBase = apiBase.slice(0, -4);
   return `${apiBase}${imagePath}`;
 }
+
 
 export default function FoodCard({ item }) {
   const { addItem } = useCart();
