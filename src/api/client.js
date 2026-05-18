@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-let rawApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+// Prefer env var, fall back to production URL (never localhost in production)
+const PRODUCTION_API = 'https://restaurant-app-backend-g8w3.onrender.com/api';
+let rawApiUrl = import.meta.env.VITE_API_URL || PRODUCTION_API;
 if (rawApiUrl.endsWith('/')) rawApiUrl = rawApiUrl.slice(0, -1);
 if (!rawApiUrl.endsWith('/api')) rawApiUrl += '/api';
 
