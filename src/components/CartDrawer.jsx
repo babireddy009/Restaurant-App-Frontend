@@ -49,7 +49,10 @@ export default function CartDrawer() {
             <div className="cart-empty">
               <div className="cart-empty__icon">🛒</div>
               <p style={{ fontWeight:600, marginBottom:8 }}>Your cart is empty</p>
-              <p style={{ fontSize:'0.85rem', color:'var(--clr-text-muted)' }}>Add some delicious items from our menu!</p>
+              <p style={{ fontSize:'0.85rem', color:'var(--clr-text-muted)', marginBottom:16 }}>Add some delicious items from our menu!</p>
+              <button className="btn btn-primary btn-sm" onClick={() => setIsOpen(false)}>
+                Go to Menu
+              </button>
             </div>
           ) : (
             items.map(item => <CartItem key={item.id} item={item} />)
@@ -66,6 +69,13 @@ export default function CartDrawer() {
               <ShoppingBag size={16} />
               Proceed to Checkout — ₹{totalPrice.toFixed(2)}
             </Link>
+            <button 
+              className="btn btn-outline w-full" 
+              style={{ marginTop: 8 }}
+              onClick={() => setIsOpen(false)}
+            >
+              ← Keep Shopping & Add More
+            </button>
           </div>
         )}
       </div>
