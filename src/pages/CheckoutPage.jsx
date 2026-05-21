@@ -188,16 +188,12 @@ export default function CheckoutPage() {
       };
 
       if (['google_pay', 'phonepe', 'paytm'].includes(paymentMethod)) {
-        let appKey = 'google_pay';
         let appName = 'Google Pay';
         if (paymentMethod === 'google_pay') {
-          appKey = 'google_pay';
           appName = 'Google Pay';
         } else if (paymentMethod === 'phonepe') {
-          appKey = 'phonepe';
           appName = 'PhonePe';
         } else if (paymentMethod === 'paytm') {
-          appKey = 'paytm';
           appName = 'Paytm';
         }
 
@@ -218,29 +214,16 @@ export default function CheckoutPage() {
             blocks: {
               preferred: {
                 name: isMobile ? `Pay via ${appName}` : `Pay via ${appName} / QR Code`,
-                instruments: isMobile
-                  ? [
-                      {
-                        method: 'upi',
-                        apps: [appKey],
-                        flows: ['intent']
-                      },
-                      {
-                        method: 'upi',
-                        flows: ['qr']
-                      }
-                    ]
-                  : [
-                      {
-                        method: 'upi',
-                        flows: ['qr']
-                      }
-                    ]
+                instruments: [
+                  {
+                    method: 'upi'
+                  }
+                ]
               }
             },
-            sequence: ['block.preferred', 'upi'],
+            sequence: ['block.preferred'],
             preferences: {
-              show_default_blocks: true
+              show_default_blocks: false
             }
           }
         };
