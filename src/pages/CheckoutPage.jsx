@@ -145,6 +145,7 @@ export default function CheckoutPage() {
       } else if (contactPhone.length > 10) {
         contactPhone = contactPhone.slice(-10);
       }
+      contactPhone = `+91${contactPhone}`;
 
       let contactEmail = user?.email || '';
       if (!contactEmail.includes('@') || !contactEmail.includes('.')) {
@@ -210,21 +211,7 @@ export default function CheckoutPage() {
               { method: 'wallet' },
               { method: 'emi' },
               { method: 'paylater' }
-            ],
-            blocks: {
-              preferred: {
-                name: isMobile ? `Pay via ${appName}` : `Pay via ${appName} / QR Code`,
-                instruments: [
-                  {
-                    method: 'upi'
-                  }
-                ]
-              }
-            },
-            sequence: ['block.preferred'],
-            preferences: {
-              show_default_blocks: false
-            }
+            ]
           }
         };
       }
