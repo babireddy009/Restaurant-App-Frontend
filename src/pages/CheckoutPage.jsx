@@ -201,21 +201,20 @@ export default function CheckoutPage() {
           appName = 'Paytm';
         }
 
-        // Prefill method as upi and restrict method to upi so Razorpay starts in UPI section immediately
+        // Prefill method as upi so Razorpay starts in UPI section immediately
         options.prefill.method = 'upi';
-        options.method = {
-          upi: true,
-          card: false,
-          netbanking: false,
-          wallet: false,
-          emi: false,
-          paylater: false
-        };
 
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         options.config = {
           display: {
+            hide: [
+              { method: 'card' },
+              { method: 'netbanking' },
+              { method: 'wallet' },
+              { method: 'emi' },
+              { method: 'paylater' }
+            ],
             blocks: {
               preferred: {
                 name: isMobile ? `Pay via ${appName}` : `Pay via ${appName} / QR Code`,
@@ -241,7 +240,7 @@ export default function CheckoutPage() {
             },
             sequence: ['block.preferred', 'upi'],
             preferences: {
-              show_default_blocks: false
+              show_default_blocks: true
             }
           }
         };
