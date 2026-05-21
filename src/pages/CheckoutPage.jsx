@@ -190,6 +190,9 @@ export default function CheckoutPage() {
           appKey = 'paytm';
         }
 
+        // Detect mobile/tablet devices
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
         options.config = {
           display: {
             blocks: {
@@ -198,7 +201,10 @@ export default function CheckoutPage() {
                 instruments: [
                   {
                     method: 'upi',
-                    apps: [appKey]
+                    // On mobile, try to open the app directly or input UPI ID.
+                    // On desktop, show QR code or input UPI ID.
+                    apps: isMobile ? [appKey] : undefined,
+                    flows: isMobile ? ['intent', 'collect'] : ['qr', 'collect']
                   }
                 ]
               }
