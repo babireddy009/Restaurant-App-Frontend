@@ -190,22 +190,38 @@ export default function CheckoutPage() {
           appName = 'Paytm';
         }
 
+        // Prefill method as upi so Razorpay starts in UPI section immediately
+        options.prefill.method = 'upi';
+
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
         options.config = {
           display: {
             blocks: {
               preferred: {
                 name: `Pay via ${appName} / QR Code`,
-                instruments: [
-                  {
-                    method: 'upi',
-                    apps: [appKey],
-                    flows: ['intent']
-                  },
-                  {
-                    method: 'upi',
-                    flows: ['qr']
-                  }
-                ]
+                instruments: isMobile
+                  ? [
+                      {
+                        method: 'upi',
+                        apps: [appKey],
+                        flows: ['intent']
+                      },
+                      {
+                        method: 'upi',
+                        flows: ['qr']
+                      }
+                    ]
+                  : [
+                      {
+                        method: 'upi',
+                        flows: ['qr']
+                      },
+                      {
+                        method: 'upi',
+                        flows: ['collect']
+                      }
+                    ]
               }
             },
             sequence: ['block.preferred'],
