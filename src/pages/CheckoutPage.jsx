@@ -176,45 +176,7 @@ export default function CheckoutPage() {
         },
       };
 
-      if (['google_pay', 'phonepe', 'paytm'].includes(paymentMethod)) {
-        let appName = 'UPI App';
-        let appKey = 'google_pay';
-        if (paymentMethod === 'google_pay') {
-          appName = 'Google Pay';
-          appKey = 'google_pay';
-        } else if (paymentMethod === 'phonepe') {
-          appName = 'PhonePe';
-          appKey = 'phonepe';
-        } else if (paymentMethod === 'paytm') {
-          appName = 'Paytm';
-          appKey = 'paytm';
-        }
 
-        options.config = {
-          display: {
-            blocks: {
-              preferred: {
-                name: `Pay via ${appName}`,
-                instruments: [
-                  {
-                    method: 'upi',
-                    apps: [appKey],
-                    flows: ['intent']
-                  },
-                  {
-                    method: 'upi',
-                    flows: ['qr', 'collect']
-                  }
-                ]
-              }
-            },
-            sequence: ['block.preferred'],
-            preferences: {
-              show_default_blocks: false
-            }
-          }
-        };
-      }
 
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', (resp) => {
