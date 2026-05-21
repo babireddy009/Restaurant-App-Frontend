@@ -108,7 +108,7 @@ export default function CheckoutPage() {
         items: cartPayload,
         delivery_address: address,
         notes,
-        payment_method: paymentMethod,
+        payment_method: paymentMethod === 'cod' ? 'cod' : 'online',
       };
       if (deliveryLat && deliveryLng) {
         payload.delivery_lat = deliveryLat;
@@ -150,6 +150,7 @@ export default function CheckoutPage() {
           name:    `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username,
           email:   user.email  || '',
           contact: user.phone  || '',
+          method:  paymentMethod === 'upi' ? 'upi' : undefined,
         },
         theme: { color: '#ff6b35' },
         handler: async (response) => {
@@ -357,21 +358,105 @@ export default function CheckoutPage() {
               {/* ── Payment Method Selector ── */}
               <div style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-md)' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 'var(--space-sm)' }}>Payment Method</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', border: paymentMethod === 'online' ? '2px solid var(--clr-primary)' : '1px solid var(--clr-border)', borderRadius: 'var(--radius-md)', cursor: 'pointer', background: paymentMethod === 'online' ? 'rgba(255,107,53,0.05)' : 'transparent' }}>
-                    <input type="radio" name="paymentMethod" value="online" checked={paymentMethod === 'online'} onChange={() => setPaymentMethod('online')} style={{ accentColor: 'var(--clr-primary)' }} />
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontWeight: 600 }}>Pay via UPI or Card</span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--clr-text-faint)' }}>GPay, PhonePe, Paytm, Visa, Mastercard</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  
+                  {/* Google Pay / PhonePe (UPI Direct) */}
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '12px', 
+                    padding: '16px', 
+                    border: paymentMethod === 'upi' ? '2px solid var(--clr-primary)' : '1px solid var(--clr-border)', 
+                    borderRadius: 'var(--radius-md)', 
+                    cursor: 'pointer', 
+                    background: paymentMethod === 'upi' ? 'rgba(255,107,53,0.06)' : 'transparent',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="upi" 
+                      checked={paymentMethod === 'upi'} 
+                      onChange={() => setPaymentMethod('upi')} 
+                      style={{ accentColor: 'var(--clr-primary)' }} 
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Google Pay / PhonePe / Paytm (UPI)</span>
+                        <span style={{ 
+                          fontSize: '0.65rem', 
+                          background: 'linear-gradient(135deg, #fd7e14, #ff6b35)', 
+                          color: 'white', 
+                          padding: '2px 8px', 
+                          borderRadius: '12px', 
+                          fontWeight: 700,
+                          letterSpacing: '0.5px'
+                        }}>
+                          ⚡ Direct App / QR
+                        </span>
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--clr-text-faint)', marginTop: 4 }}>
+                        Redirects directly to PhonePe, Google Pay, or Paytm for fast checkout.
+                      </span>
                     </div>
                   </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', border: paymentMethod === 'cod' ? '2px solid var(--clr-primary)' : '1px solid var(--clr-border)', borderRadius: 'var(--radius-md)', cursor: 'pointer', background: paymentMethod === 'cod' ? 'rgba(255,107,53,0.05)' : 'transparent' }}>
-                    <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} style={{ accentColor: 'var(--clr-primary)' }} />
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontWeight: 600 }}>Cash on Delivery</span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--clr-text-faint)' }}>Pay with cash when your food arrives</span>
+
+                  {/* Standard Cards & Netbanking */}
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '12px', 
+                    padding: '16px', 
+                    border: paymentMethod === 'online' ? '2px solid var(--clr-primary)' : '1px solid var(--clr-border)', 
+                    borderRadius: 'var(--radius-md)', 
+                    cursor: 'pointer', 
+                    background: paymentMethod === 'online' ? 'rgba(255,107,53,0.06)' : 'transparent',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="online" 
+                      checked={paymentMethod === 'online'} 
+                      onChange={() => setPaymentMethod('online')} 
+                      style={{ accentColor: 'var(--clr-primary)' }} 
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Cards, Netbanking or Wallet</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--clr-text-faint)', marginTop: 4 }}>
+                        Credit/Debit Card (Visa, Mastercard, RuPay), Netbanking, or Wallets.
+                      </span>
                     </div>
                   </label>
+
+                  {/* Cash on Delivery */}
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '12px', 
+                    padding: '16px', 
+                    border: paymentMethod === 'cod' ? '2px solid var(--clr-primary)' : '1px solid var(--clr-border)', 
+                    borderRadius: 'var(--radius-md)', 
+                    cursor: 'pointer', 
+                    background: paymentMethod === 'cod' ? 'rgba(255,107,53,0.06)' : 'transparent',
+                    transition: 'all 0.2s ease'
+                  }}>
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="cod" 
+                      checked={paymentMethod === 'cod'} 
+                      onChange={() => setPaymentMethod('cod')} 
+                      style={{ accentColor: 'var(--clr-primary)' }} 
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Cash on Delivery (COD)</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--clr-text-faint)', marginTop: 4 }}>
+                        Pay with cash when your food arrives.
+                      </span>
+                    </div>
+                  </label>
+
                 </div>
               </div>
 
@@ -385,11 +470,11 @@ export default function CheckoutPage() {
               >
                 {loading
                   ? <><div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Processing...</>
-                  : paymentMethod === 'online' ? <>🔒 Pay ₹{grandTotal.toFixed(2)} Securely</> : <>🛵 Confirm Order (COD)</>
+                  : paymentMethod !== 'cod' ? <>🔒 Pay ₹{grandTotal.toFixed(2)} Securely</> : <>🛵 Confirm Order (COD)</>
                 }
               </button>
 
-              {paymentMethod === 'online' && (
+              {paymentMethod !== 'cod' && (
                 <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--clr-text-faint)', marginTop: 8, marginBottom: 12 }}>
                   🔒 Secured by Razorpay · 256-bit SSL
                 </p>
