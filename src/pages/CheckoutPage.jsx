@@ -139,6 +139,18 @@ export default function CheckoutPage() {
       const { razorpay_order_id, amount, key } = payRes.data;
 
       // Step 3: Open Razorpay checkout modal
+      let contactPhone = (user?.phone || '').replace(/[^0-9]/g, '');
+      if (contactPhone.length < 10) {
+        contactPhone = '9876543210';
+      } else if (contactPhone.length > 10) {
+        contactPhone = contactPhone.slice(-10);
+      }
+
+      let contactEmail = user?.email || '';
+      if (!contactEmail.includes('@') || !contactEmail.includes('.')) {
+        contactEmail = `${user?.username || 'customer'}@gmail.com`;
+      }
+
       const options = {
         key,
         amount,
@@ -147,9 +159,9 @@ export default function CheckoutPage() {
         description: `Order #${orderId}`,
         order_id: razorpay_order_id,
         prefill: {
-          name:    `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username || 'Customer',
-          email:   user.email || `${user.username || 'customer'}@example.com`,
-          contact: (user.phone || '9999999999').replace(/[^0-9+]/g, ''),
+          name:    `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || user?.username || 'Customer',
+          email:   contactEmail,
+          contact: contactPhone,
         },
         theme: { color: '#ff6b35' },
         handler: async (response) => {
@@ -189,8 +201,16 @@ export default function CheckoutPage() {
           appName = 'Paytm';
         }
 
-        // Prefill method as upi so Razorpay starts in UPI section immediately
+        // Prefill method as upi and restrict method to upi so Razorpay starts in UPI section immediately
         options.prefill.method = 'upi';
+        options.method = {
+          upi: true,
+          card: false,
+          netbanking: false,
+          wallet: false,
+          emi: false,
+          paylater: false
+        };
 
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -219,14 +239,23 @@ export default function CheckoutPage() {
                     ]
               }
             },
-            sequence: ['block.preferred'],
+            sequence: ['block.preferred', 'upi'],
             preferences: {
-              show_default_blocks: true
+              show_default_blocks: false
             }
           }
         };
       }
 
+
+      console.log("Razorpay Initialization Options:", {
+        key: options.key,
+        amount: options.amount,
+        currency: options.currency,
+        order_id: options.order_id,
+        prefill: options.prefill,
+        config: options.config,
+      });
 
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', (resp) => {
