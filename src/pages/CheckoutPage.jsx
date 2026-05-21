@@ -176,6 +176,28 @@ export default function CheckoutPage() {
         },
       };
 
+      if (paymentMethod === 'upi') {
+        options.config = {
+          display: {
+            blocks: {
+              preferred: {
+                name: 'Pay via Google Pay / PhonePe / Paytm',
+                instruments: [
+                  {
+                    method: 'upi',
+                    apps: ['google_pay', 'phonepe', 'paytm']
+                  }
+                ]
+              }
+            },
+            sequence: ['block.preferred'],
+            preferences: {
+              show_default_blocks: false
+            }
+          }
+        };
+      }
+
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', (resp) => {
         toast.error(`Payment failed: ${resp.error.description || 'Unknown error'}`, { duration: 6000 });
