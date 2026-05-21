@@ -14,6 +14,13 @@ const CATEGORY_EMOJI = {
 // Resolves image path to a full URL the browser can load
 function resolveImage(imagePath) {
   if (!imagePath) return null;
+  
+  // If it's a frontend public folder image, resolve it relative to frontend
+  const idx = imagePath.indexOf('/images/');
+  if (idx !== -1) {
+    return imagePath.slice(idx); // returns '/images/...'
+  }
+
   if (imagePath.startsWith('http')) return imagePath;         // absolute URL
   if (imagePath.startsWith('/images/')) return imagePath;     // frontend public folder — served by Vercel as-is
   // Django media upload paths — prefix with backend base URL

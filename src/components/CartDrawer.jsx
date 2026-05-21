@@ -4,6 +4,9 @@ import { useCart } from '../context/CartContext';
 
 function CartItem({ item }) {
   const { updateQty, removeItem } = useCart();
+  const idx = item.image ? item.image.indexOf('/images/') : -1;
+  const imageUrl = idx !== -1 ? item.image.slice(idx) : item.image;
+
   return (
     <div className="cart-item">
       <div className="cart-item__img" style={{
@@ -11,8 +14,8 @@ function CartItem({ item }) {
         display:'flex', alignItems:'center', justifyContent:'center',
         fontSize:'1.5rem', flexShrink:0, width:60, height:60, borderRadius:8
       }}>
-        {item.image ? (
-          <img src={item.image} alt={item.name} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:8 }} />
+        {imageUrl ? (
+          <img src={imageUrl} alt={item.name} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:8 }} />
         ) : '🍽️'}
       </div>
       <div className="cart-item__info">

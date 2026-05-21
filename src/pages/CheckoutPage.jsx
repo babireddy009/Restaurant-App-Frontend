@@ -217,9 +217,14 @@ export default function CheckoutPage() {
         }} 
       />
       <div className="container">
-        <div className="page-header">
-          <h1 className="page-header__title">Checkout</h1>
-          <p className="page-header__sub">Almost there! Confirm your order</p>
+        <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: 'var(--space-xl)' }}>
+          <div>
+            <h1 className="page-header__title">Checkout</h1>
+            <p className="page-header__sub">Almost there! Confirm your order</p>
+          </div>
+          <Link to="/menu" className="btn btn-outline btn-sm" style={{ alignSelf: 'flex-start' }}>
+            ← Add More Items / Back to Menu
+          </Link>
         </div>
 
         <div className="checkout-grid">
