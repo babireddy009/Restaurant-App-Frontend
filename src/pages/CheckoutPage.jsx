@@ -177,59 +177,8 @@ export default function CheckoutPage() {
       };
 
       if (['google_pay', 'phonepe', 'paytm'].includes(paymentMethod)) {
-        let appKey = 'google_pay';
-        let appName = 'Google Pay';
-        if (paymentMethod === 'google_pay') {
-          appKey = 'google_pay';
-          appName = 'Google Pay';
-        } else if (paymentMethod === 'phonepe') {
-          appKey = 'phonepe';
-          appName = 'PhonePe';
-        } else if (paymentMethod === 'paytm') {
-          appKey = 'paytm';
-          appName = 'Paytm';
-        }
-
         // Prefill method as upi so Razorpay starts in UPI section immediately
         options.prefill.method = 'upi';
-
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-        options.config = {
-          display: {
-            blocks: {
-              preferred: {
-                name: `Pay via ${appName} / QR Code`,
-                instruments: isMobile
-                  ? [
-                      {
-                        method: 'upi',
-                        apps: [appKey],
-                        flows: ['intent']
-                      },
-                      {
-                        method: 'upi',
-                        flows: ['qr']
-                      }
-                    ]
-                  : [
-                      {
-                        method: 'upi',
-                        flows: ['qr']
-                      },
-                      {
-                        method: 'upi',
-                        flows: ['collect']
-                      }
-                    ]
-              }
-            },
-            sequence: ['block.preferred'],
-            preferences: {
-              show_default_blocks: true
-            }
-          }
-        };
       }
 
 
