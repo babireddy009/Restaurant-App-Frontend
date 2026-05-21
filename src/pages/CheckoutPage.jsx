@@ -150,7 +150,7 @@ export default function CheckoutPage() {
           name:    `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username,
           email:   user.email  || '',
           contact: user.phone  || '',
-          method:  ['google_pay', 'phonepe', 'paytm'].includes(paymentMethod) ? 'upi' : undefined,
+          method:  undefined,
         },
         theme: { color: '#ff6b35' },
         handler: async (response) => {
@@ -175,7 +175,46 @@ export default function CheckoutPage() {
           },
         },
       };
-      // No custom config overrides to avoid SDK compatibility errors on desktop/mobile
+
+      if (['google_pay', 'phonepe', 'paytm'].includes(paymentMethod)) {
+        let appKey = 'google_pay';
+        let appName = 'Google Pay';
+        if (paymentMethod === 'google_pay') {
+          appKey = 'google_pay';
+          appName = 'Google Pay';
+        } else if (paymentMethod === 'phonepe') {
+          appKey = 'phonepe';
+          appName = 'PhonePe';
+        } else if (paymentMethod === 'paytm') {
+          appKey = 'paytm';
+          appName = 'Paytm';
+        }
+
+        options.config = {
+          display: {
+            blocks: {
+              preferred: {
+                name: `Pay via ${appName} / QR Code`,
+                instruments: [
+                  {
+                    method: 'upi',
+                    apps: [appKey],
+                    flows: ['intent']
+                  },
+                  {
+                    method: 'upi',
+                    flows: ['qr']
+                  }
+                ]
+              }
+            },
+            sequence: ['block.preferred'],
+            preferences: {
+              show_default_blocks: true
+            }
+          }
+        };
+      }
 
 
       const rzp = new window.Razorpay(options);
