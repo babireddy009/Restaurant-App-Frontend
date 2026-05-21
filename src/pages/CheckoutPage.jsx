@@ -147,10 +147,9 @@ export default function CheckoutPage() {
         description: `Order #${orderId}`,
         order_id: razorpay_order_id,
         prefill: {
-          name:    `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username,
-          email:   user.email  || '',
-          contact: user.phone  || '',
-          method:  undefined,
+          name:    `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username || 'Customer',
+          email:   user.email || `${user.username || 'customer'}@example.com`,
+          contact: (user.phone || '9999999999').replace(/[^0-9+]/g, ''),
         },
         theme: { color: '#ff6b35' },
         handler: async (response) => {
@@ -213,10 +212,6 @@ export default function CheckoutPage() {
                       }
                     ]
                   : [
-                      {
-                        method: 'upi',
-                        apps: [appKey]
-                      },
                       {
                         method: 'upi',
                         flows: ['qr']
