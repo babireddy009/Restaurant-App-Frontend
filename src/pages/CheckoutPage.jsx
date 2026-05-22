@@ -141,7 +141,7 @@ export default function CheckoutPage() {
       // Step 3: Open Razorpay checkout modal
       let contactPhone = (user?.phone || '').replace(/[^0-9]/g, '');
       if (contactPhone.length < 10) {
-        contactPhone = '9876543210';
+        contactPhone = '9988776655';
       } else if (contactPhone.length > 10) {
         contactPhone = contactPhone.slice(-10);
       }
@@ -201,17 +201,23 @@ export default function CheckoutPage() {
         // Prefill method as upi so Razorpay starts in UPI section immediately
         options.prefill.method = 'upi';
 
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
         options.config = {
           display: {
-            hide: [
-              { method: 'card' },
-              { method: 'netbanking' },
-              { method: 'wallet' },
-              { method: 'emi' },
-              { method: 'paylater' }
-            ]
+            blocks: {
+              upi: {
+                name: 'Pay via UPI',
+                instruments: [
+                  {
+                    method: 'upi',
+                    flows: ['qr', 'intent', 'collect']
+                  }
+                ]
+              }
+            },
+            sequence: ['block.upi'],
+            preferences: {
+              show_default_blocks: false
+            }
           }
         };
       }
