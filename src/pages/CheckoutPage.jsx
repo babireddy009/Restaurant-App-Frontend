@@ -414,6 +414,30 @@ export default function CheckoutPage() {
               {/* ── Payment Method Selector ── */}
               <div style={{ marginTop: 'var(--space-xl)', marginBottom: 'var(--space-md)' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: 'var(--space-sm)' }}>Payment Method</h3>
+                
+                {import.meta.env.VITE_RAZORPAY_KEY_ID?.startsWith('rzp_test_') && (
+                  <div style={{
+                    background: 'rgba(255, 107, 53, 0.08)',
+                    border: '1px dashed var(--clr-primary)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '12px 16px',
+                    marginBottom: '16px',
+                    fontSize: '0.82rem',
+                    lineHeight: '1.4',
+                    color: 'var(--clr-text)'
+                  }}>
+                    <span style={{ fontWeight: 700, color: 'var(--clr-primary)', display: 'block', marginBottom: '4px' }}>
+                      ⚠️ Razorpay Test Mode Active
+                    </span>
+                    Real transactions are disabled. To complete this test payment, do not use real banking apps. Instead:
+                    <ul style={{ margin: '6px 0 0 16px', padding: 0 }}>
+                      <li><strong>UPI:</strong> Use the "Pay via UPI QR" option and click "Simulate Success" in the modal.</li>
+                      <li><strong>UPI ID:</strong> Use <code style={{background:'rgba(255,255,255,0.15)', padding:'2px 4px', borderRadius:'4px'}}>success@razorpay</code> to auto-approve.</li>
+                      <li><strong>Cards/Netbanking:</strong> Use dummy credentials provided on the screen.</li>
+                    </ul>
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   
                   {/* Google Pay */}
