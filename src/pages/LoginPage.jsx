@@ -96,12 +96,6 @@ export default function LoginPage() {
           Don't have an account? <Link to="/register" className="auth-link">Create one</Link>
         </p>
 
-        <div style={{ marginTop:'var(--space-lg)', padding:'var(--space-md)', background:'rgba(0,0,0,0.02)', border:'1px solid var(--clr-border)', borderRadius:'var(--radius-sm)', fontSize:'0.78rem', color:'var(--clr-text-muted)' }}>
-          <strong>Demo credentials:</strong><br />
-          Admin: admin / admin@123<br />
-          Staff: staff / staff@123
-        </div>
-
         <div style={{ marginTop:'var(--space-md)', display:'flex', justifyContent:'space-between', fontSize:'0.82rem' }}>
           <Link to="/driver/login" className="auth-link">Driver Portal</Link>
           <a href="https://restaurant-app-backend-g8w3.onrender.com/admin/" target="_blank" rel="noopener noreferrer" className="auth-link">Django Admin Portal</a>

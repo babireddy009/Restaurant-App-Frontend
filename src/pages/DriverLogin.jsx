@@ -78,12 +78,6 @@ export default function DriverLogin() {
           Want to become a Delivery Partner? <br/>
           <Link to="/driver/register" style={{ color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}>Register Here</Link>
         </div>
-
-        <div style={{ marginTop:'var(--space-lg)', padding:'var(--space-md)', background:'rgba(255,255,255,0.04)', borderRadius:'var(--radius-sm)', fontSize:'0.78rem', color:'var(--clr-text-faint)' }}>
-          <strong>Demo Driver credentials:</strong><br />
-          Username: driver<br />
-          Password: driver@123
-        </div>
       </div>
     </div>
   );

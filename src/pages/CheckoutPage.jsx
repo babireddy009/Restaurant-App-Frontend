@@ -41,7 +41,7 @@ export default function CheckoutPage() {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''
   });
 
-  const deliveryFee = totalPrice > 500 ? 0 : 49;
+  const deliveryFee = 0; // totalPrice > 500 ? 0 : 49; (Delivery fee temporarily disabled)
   const taxes = Math.round(totalPrice * 0.05);
   const grandTotal = totalPrice + deliveryFee + taxes;
 
