@@ -62,7 +62,7 @@ export default function HomePage() {
         }} className="hero__image-side">
           <img
             src="/images/hero_food.png"
-            alt="Rayalasema food spread"
+            alt="Rayalaseema food spread"
             style={{
               width: '100%', borderRadius: 'var(--radius-xl)',
               boxShadow: 'var(--shadow-lg), 0 0 60px rgba(255,107,53,0.18)',

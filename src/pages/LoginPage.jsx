@@ -33,7 +33,7 @@ export default function LoginPage() {
       <div className="auth-card">
         <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:'var(--space-lg)' }}>
           <ChefHat size={28} color="var(--clr-primary)" />
-          <span style={{ fontFamily:'var(--font-display)', fontSize:'1.2rem', color:'var(--clr-primary)' }}>MSR Rayalasema Ruchulu</span>
+          <span style={{ fontFamily:'var(--font-display)', fontSize:'1.2rem', color:'var(--clr-primary)' }}>MSR Rayalaseema Ruchulu</span>
         </div>
         <h1 className="auth-card__title">Welcome back</h1>
         <p className="auth-card__sub">Sign in to your account to continue</p>

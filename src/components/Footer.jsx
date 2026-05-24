@@ -26,9 +26,9 @@ export default function Footer() {
       <div className="container" style={{ marginTop: 'var(--space-2xl)' }}>
         <div className="footer__grid">
           <div>
-            <div className="footer__brand">MSR Rayalasema Ruchulu</div>
+            <div className="footer__brand">MSR Rayalaseema Ruchulu</div>
             <p className="footer__desc">
-              Authentic Rayalasema flavors, modern experience. Order your favorite
+              Authentic Rayalaseema flavors, modern experience. Order your favorite
               traditional dishes online and get them delivered hot to your door.
             </p>
             <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
@@ -65,15 +65,15 @@ export default function Footer() {
           <div>
             <p className="footer__heading">Contact</p>
             <ul className="footer__links">
-              <li><span className="footer__link">📍 MSR Rayalasema Ruchulu, Darsi Road,Opposite HP petrol bunk, Podili, Markapuram District, Andhra Pradesh- 523240</span></li>
+              <li><span className="footer__link">📍 MSR Rayalaseema Ruchulu, Darsi Road,Opposite HP petrol bunk, Podili, Markapuram District, Andhra Pradesh- 523240</span></li>
               <li><span className="footer__link">📞 +91  9390448306</span></li>
-              <li><span className="footer__link">✉️ contact@msrrayalasemaruchulu.in</span></li>
+              <li><span className="footer__link">✉️ contact@msrrayalaseemaruchulu.in</span></li>
               <li><span className="footer__link">🕐 11 AM – 11 PM Daily</span></li>
             </ul>
           </div>
         </div>
         <div className="footer__bottom">
-          <p><span style={{ color: '#fd7e14', fontWeight: 'bold' }}>© 2024 MSR Rayalasema Ruchulu. This site is developed and maintained by <span style={{ color: 'blue', fontWeight: 'bold' }}>Venkata Reddy Yenika.</span></span></p>
+          <p><span style={{ color: '#fd7e14', fontWeight: 'bold' }}>© 2024 MSR Rayalaseema Ruchulu. This site is developed and maintained by <span style={{ color: 'blue', fontWeight: 'bold' }}>Venkata Reddy Yenika.</span></span></p>
         </div>
       </div>
     </footer>

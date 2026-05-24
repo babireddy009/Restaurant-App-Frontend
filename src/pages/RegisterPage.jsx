@@ -108,7 +108,7 @@ export default function RegisterPage() {
     try {
       await register(finalPayload);
       await login({ username: form.username, password: form.password });
-      toast.success('Account created! Welcome to MSR Rayalasema Ruchulu 🎉');
+      toast.success('Account created! Welcome to MSR Rayalaseema Ruchulu 🎉');
       navigate('/');
     } catch (err) {
       const data = err?.response?.data;
@@ -127,7 +127,7 @@ export default function RegisterPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 'var(--space-lg)', justifyContent: 'center' }}>
           <ChefHat size={28} color="var(--clr-primary)" />
           <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--clr-primary)' }}>
-            MSR Rayalasema Ruchulu
+            MSR Rayalaseema Ruchulu
           </span>
         </div>
 

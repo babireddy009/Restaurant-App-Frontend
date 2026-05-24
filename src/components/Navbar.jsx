@@ -16,7 +16,7 @@ export default function Navbar() {
         <div className="container navbar__inner">
           <Link to="/" className="navbar__brand">
             <ChefHat size={24} color="#ff6b35" />
-            <span className="navbar__logo">MSR Rayalasema Ruchulu</span>
+            <span className="navbar__logo">MSR Rayalaseema Ruchulu</span>
           </Link>
 
           <div className="navbar__nav">

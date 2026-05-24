@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icons/*.png', 'images/*.png'],
       manifest: {
-        name: 'MSR Rayalasema Ruchulu',
+        name: 'MSR Rayalaseema Ruchulu',
         short_name: 'MSR Food',
-        description: 'Order authentic Rayalasema food online — fast delivery, easy payment',
+        description: 'Order authentic Rayalaseema food online — fast delivery, easy payment',
         theme_color: '#ff6b35',
         background_color: '#0f0f1a',
         display: 'standalone',
@@ -64,7 +64,7 @@ export default defineConfig({
             sizes: '1101x1101',
             type: 'image/png',
             form_factor: 'wide',
-            label: 'MSR Rayalasema Ruchulu Food Menu',
+            label: 'MSR Rayalaseema Ruchulu Food Menu',
           }
         ],
         shortcuts: [
