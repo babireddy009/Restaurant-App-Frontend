@@ -167,6 +167,7 @@ export default function CheckoutPage() {
         theme: { color: '#ff6b35' },
         handler: async (response) => {
           try {
+            console.log("Razorpay payment succeeded. Verifying signature with backend...", response);
             await verifyPayment({
               razorpay_order_id:   response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
@@ -176,7 +177,9 @@ export default function CheckoutPage() {
             setSuccessOrderId(orderId);
             setShowSuccess(true);
           } catch (verErr) {
-            toast.error(verErr?.response?.data?.error || 'Signature verification failed.');
+            console.error("Payment Signature Verification Failed:", verErr);
+            const backendError = verErr?.response?.data?.error || verErr?.response?.data?.detail;
+            toast.error(backendError || verErr?.message || 'Signature verification failed.', { duration: 6000 });
             setLoading(false);
           }
         },
