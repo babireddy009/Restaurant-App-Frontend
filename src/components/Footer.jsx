@@ -83,7 +83,34 @@ export default function Footer() {
           </div>
         </div>
         <div className="footer__bottom">
-          <p><span style={{ color: '#fd7e14', fontWeight: 'bold' }}>© 2024 MSR Rayalaseema Ruchulu. This site is developed and maintained by <span style={{ color: 'blue', fontWeight: 'bold' }}>Venkata Reddy Yenika.</span></span></p>
+          <p style={{ 
+            fontSize: '0.88rem', 
+            color: 'var(--clr-text-muted)', 
+            fontWeight: 500, 
+            letterSpacing: '0.2px',
+            margin: 0
+          }}>
+            © 2026 <span style={{ color: 'var(--clr-primary)', fontWeight: 700 }}>MSR Rayalaseema Ruchulu</span>. All rights reserved.
+          </p>
+          <p style={{ 
+            fontSize: '0.78rem', 
+            color: 'var(--clr-text-faint)', 
+            marginTop: '6px',
+            fontWeight: 500
+          }}>
+            This site is developed and maintained by{' '}
+            <span style={{ 
+              background: 'var(--grad-primary)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontWeight: 800,
+              fontSize: '0.82rem',
+              letterSpacing: '0.5px',
+              display: 'inline-block'
+            }}>
+              Venkata Reddy Yenika
+            </span>
+          </p>
         </div>
       </div>
     </footer>
