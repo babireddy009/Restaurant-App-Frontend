@@ -361,7 +361,7 @@ export default function OrderDetailPage() {
             <p style={{ fontSize:'0.85rem', color:'var(--clr-text-muted)', lineHeight:1.6 }}>
               MSR Rayalaseema Ruchulu, Darsi Road, Podili<br />
               <a 
-                href="https://www.google.com/maps/search/?api=1&query=15.625224761297483,79.62384590419613" 
+                href="https://maps.app.goo.gl/x47GgBFFouqvA1Bt6" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}

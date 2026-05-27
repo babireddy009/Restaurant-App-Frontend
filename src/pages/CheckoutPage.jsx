@@ -319,7 +319,7 @@ export default function CheckoutPage() {
               }}>
                 <span style={{ fontSize: '1.1rem' }}>🏪</span>
                 <div>
-                  Preparing fresh from: <strong>MSR Rayalaseema Ruchulu (Podili)</strong> · <a href="https://www.google.com/maps/search/?api=1&query=15.625224761297483,79.62384590419613" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none' }}>View on Google Maps</a>
+                  Preparing fresh from: <strong>MSR Rayalaseema Ruchulu (Podili)</strong> · <a href="https://maps.app.goo.gl/x47GgBFFouqvA1Bt6" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none' }}>View on Google Maps</a>
                 </div>
               </div>
 
