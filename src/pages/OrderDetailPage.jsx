@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, CreditCard, Phone, MessageCircle, Star } from 'lucide-react';
 import { useJsApiLoader, GoogleMap, Marker, DirectionsRenderer } from '@react-google-maps/api';
-import { getOrderDetail, submitReview } from '../api/endpoints';
+import { getOrderDetail, submitReview, cancelOrder } from '../api/endpoints';
 import StatusBadge from '../components/StatusBadge';
 import DeliveryChat from '../components/DeliveryChat';
 import toast from 'react-hot-toast';
@@ -22,6 +22,8 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   
   const [reviewForm, setReviewForm] = useState({ food_rating: 5, driver_rating: 5, comments: '' });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
@@ -107,6 +109,20 @@ export default function OrderDetailPage() {
     window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
   };
 
+  const handleCancelOrder = async () => {
+    setShowCancelModal(false);
+    setCancelling(true);
+    try {
+      const res = await cancelOrder(order.id);
+      toast.success(res.data.message, { duration: 8000 });
+      setOrder(res.data.order);
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to cancel the order. Please try again.');
+    } finally {
+      setCancelling(false);
+    }
+  };
+
   const renderStars = (rating, setRating) => (
     <div style={{ display: 'flex', gap: '4px' }}>
       {[1, 2, 3, 4, 5].map(star => (
@@ -129,25 +145,44 @@ export default function OrderDetailPage() {
           <Link to="/orders" className="btn btn-ghost btn-sm" style={{ display:'inline-flex' }}>
             <ArrowLeft size={16} /> Back to Orders
           </Link>
-          <button 
-            onClick={shareBillOnWhatsApp}
-            className="btn btn-outline btn-sm"
-            style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '6px', 
-              borderColor: '#25D366', 
-              color: '#25D366', 
-              background: 'rgba(37, 211, 102, 0.05)',
-              padding: '6px 12px',
-              fontSize: '0.8rem',
-              borderRadius: '20px',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            <MessageCircle size={14} color="#25D366" /> Share Bill on WhatsApp
-          </button>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button 
+              onClick={shareBillOnWhatsApp}
+              className="btn btn-outline btn-sm"
+              style={{ 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px', 
+                borderColor: '#25D366', 
+                color: '#25D366', 
+                background: 'rgba(37, 211, 102, 0.05)',
+                padding: '6px 12px',
+                fontSize: '0.8rem',
+                borderRadius: '20px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              <MessageCircle size={14} color="#25D366" /> Share Bill on WhatsApp
+            </button>
+            {order.payment_method === 'online' && order.status !== 'cancelled' && order.status !== 'delivered' && (
+              <button 
+                onClick={() => setShowCancelModal(true)}
+                className="btn btn-danger btn-sm"
+                disabled={cancelling}
+                style={{ 
+                  borderRadius: '20px',
+                  fontWeight: 600,
+                  fontSize: '0.8rem',
+                  padding: '6px 14px',
+                  cursor: 'pointer',
+                  border: 'none'
+                }}
+              >
+                {cancelling ? 'Cancelling...' : 'Cancel Order'}
+              </button>
+            )}
+          </div>
         </div>
 
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'var(--space-xl)' }}>
@@ -392,6 +427,235 @@ export default function OrderDetailPage() {
           driverPhone={order.driver_phone} 
           onClose={() => setIsChatOpen(false)} 
         />
+      )}
+
+      {showCancelModal && (
+        <div className="custom-modal-overlay">
+          <div className="custom-modal-card">
+            <div className="custom-modal-header">
+              <span className="warning-icon-badge">⚠️</span>
+              <h2>Cancel Order #{order.id}</h2>
+            </div>
+            
+            <div className="custom-modal-body">
+              {(() => {
+                const beforePrepare = order.status === 'pending' || order.status === 'confirmed';
+                return beforePrepare ? (
+                  <div className="policy-block refund-eligible">
+                    <div className="policy-pill success">100% Refundable</div>
+                    <p className="policy-message">
+                      The kitchen has not started preparing your food yet. You are eligible for a <strong>full refund</strong>.
+                    </p>
+                    <div className="refund-summary-row">
+                      <span>Refund Amount:</span>
+                      <span className="refund-val success">₹{parseFloat(order.total_amount).toFixed(2)}</span>
+                    </div>
+                    <p className="policy-timeline">
+                      * The refund will be credited back to your original payment method within 5-10 business days.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="policy-block refund-charge">
+                    <div className="policy-pill danger">100% Cancellation Charge Applies</div>
+                    <p className="policy-message">
+                      Our kitchen has already started preparing your fresh food! If you cancel now, you will be charged a 100% cancellation fee as per Zomato's refund policy.
+                    </p>
+                    <div className="refund-summary-row">
+                      <span>Refund Amount:</span>
+                      <span className="refund-val danger">₹0.00</span>
+                    </div>
+                    <div className="fee-summary-row">
+                      <span>Cancellation Fee:</span>
+                      <span>₹{parseFloat(order.total_amount).toFixed(2)}</span>
+                    </div>
+                    <p className="policy-timeline warning-text">
+                      * No refund will be issued back to your account.
+                    </p>
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="custom-modal-footer">
+              <button 
+                onClick={() => setShowCancelModal(false)} 
+                className="btn btn-ghost" 
+                style={{ borderRadius: '25px', padding: '10px 24px', flex: 1 }}
+              >
+                Keep My Order
+              </button>
+              <button 
+                onClick={handleCancelOrder} 
+                className="btn btn-danger" 
+                style={{ borderRadius: '25px', padding: '10px 24px', flex: 1 }}
+              >
+                Yes, Cancel Order
+              </button>
+            </div>
+          </div>
+
+          <style>{`
+            .custom-modal-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0, 0, 0, 0.7);
+              backdrop-filter: blur(8px);
+              z-index: 1000;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              animation: modal-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+              padding: var(--space-md);
+            }
+
+            .custom-modal-card {
+              background: var(--grad-card, #fff);
+              border: 1px solid var(--clr-border);
+              border-radius: var(--radius-lg);
+              width: 100%;
+              max-width: 480px;
+              box-shadow: var(--shadow-lg);
+              display: flex;
+              flex-direction: column;
+              animation: modal-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+              overflow: hidden;
+            }
+
+            .custom-modal-header {
+              padding: var(--space-lg) var(--space-lg) var(--space-md);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              text-align: center;
+              gap: var(--space-sm);
+              border-bottom: 1px solid var(--clr-border);
+            }
+
+            .warning-icon-badge {
+              font-size: 2.2rem;
+              line-height: 1;
+              animation: warning-pulse 1.5s ease-in-out infinite;
+            }
+
+            .custom-modal-header h2 {
+              font-family: var(--font-display);
+              font-size: 1.4rem;
+              font-weight: 800;
+              color: var(--clr-text);
+              margin: 0;
+            }
+
+            .custom-modal-body {
+              padding: var(--space-lg);
+              color: var(--clr-text-muted);
+            }
+
+            .policy-block {
+              display: flex;
+              flex-direction: column;
+              gap: var(--space-md);
+            }
+
+            .policy-pill {
+              align-self: center;
+              padding: 6px 16px;
+              border-radius: var(--radius-full);
+              font-size: 0.78rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .policy-pill.success {
+              background: rgba(16, 185, 129, 0.12);
+              color: var(--clr-success);
+              border: 1.5px solid rgba(16, 185, 129, 0.25);
+            }
+
+            .policy-pill.danger {
+              background: rgba(239, 68, 68, 0.12);
+              color: var(--clr-danger);
+              border: 1.5px solid rgba(239, 68, 68, 0.25);
+            }
+
+            .policy-message {
+              font-size: 0.92rem;
+              line-height: 1.5;
+              text-align: center;
+              color: var(--clr-text-muted);
+            }
+
+            .refund-summary-row, .fee-summary-row {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: var(--space-md) var(--space-lg);
+              background: var(--clr-surface-2);
+              border-radius: var(--radius-md);
+              font-weight: 700;
+              font-size: 0.95rem;
+            }
+
+            .fee-summary-row {
+              margin-top: calc(-1 * var(--space-xs));
+              background: rgba(239, 68, 68, 0.03);
+              border: 1px dashed rgba(239, 68, 68, 0.15);
+              font-weight: 600;
+              color: var(--clr-text-muted);
+            }
+
+            .refund-val {
+              font-size: 1.15rem;
+              font-weight: 800;
+            }
+
+            .refund-val.success {
+              color: var(--clr-success);
+            }
+
+            .refund-val.danger {
+              color: var(--clr-danger);
+            }
+
+            .policy-timeline {
+              font-size: 0.75rem;
+              color: var(--clr-text-faint);
+              text-align: center;
+              line-height: 1.4;
+            }
+
+            .policy-timeline.warning-text {
+              color: var(--clr-danger);
+              font-weight: 600;
+            }
+
+            .custom-modal-footer {
+              padding: var(--space-lg);
+              display: flex;
+              gap: var(--space-md);
+              border-top: 1px solid var(--clr-border);
+              background: var(--clr-surface);
+            }
+
+            @keyframes modal-fade-in {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+
+            @keyframes modal-slide-up {
+              from { opacity: 0; transform: translateY(30px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+
+            @keyframes warning-pulse {
+              0%, 100% { transform: scale(1); }
+              50% { transform: scale(1.1); }
+            }
+          `}</style>
+        </div>
       )}
     </div>
   );
