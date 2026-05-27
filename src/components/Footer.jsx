@@ -67,7 +67,7 @@ export default function Footer() {
             <ul className="footer__links">
               <li>
                 <a 
-                  href="https://www.google.com/maps/search/?api=1&query=15.6249,79.6227" 
+                  href="https://www.google.com/maps/search/?api=1&query=15.625224761297483,79.62384590419613" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="footer__link" 

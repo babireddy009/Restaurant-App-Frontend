@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 
 const STEPS = ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered'];
 
-const RESTAURANT_LOCATION = { lat: 15.6249, lng: 79.6227 }; // MSR Rayalaseema Ruchulu (Podili)
+const RESTAURANT_LOCATION = { lat: 15.625224761297483, lng: 79.62384590419613 }; // MSR Rayalaseema Ruchulu (Podili)
 
 const MAP_CONTAINER_STYLE = {
   width: '100%',
@@ -361,7 +361,7 @@ export default function OrderDetailPage() {
             <p style={{ fontSize:'0.85rem', color:'var(--clr-text-muted)', lineHeight:1.6 }}>
               MSR Rayalaseema Ruchulu, Darsi Road, Podili<br />
               <a 
-                href="https://www.google.com/maps/search/?api=1&query=15.6249,79.6227" 
+                href="https://www.google.com/maps/search/?api=1&query=15.625224761297483,79.62384590419613" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}
