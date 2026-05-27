@@ -65,7 +65,17 @@ export default function Footer() {
           <div>
             <p className="footer__heading">Contact</p>
             <ul className="footer__links">
-              <li><span className="footer__link">📍 MSR Rayalaseema Ruchulu, Darsi Road,Opposite HP petrol bunk, Podili, Markapuram District, Andhra Pradesh- 523240</span></li>
+              <li>
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=15.6249,79.6227" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="footer__link" 
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                >
+                  📍 MSR Rayalaseema Ruchulu, Darsi Road, Opposite HP petrol bunk, Podili, Markapuram District, Andhra Pradesh- 523240
+                </a>
+              </li>
               <li><span className="footer__link">📞 +91  9390448306</span></li>
               <li><span className="footer__link">✉️ contact@msrrayalaseemaruchulu.in</span></li>
               <li><span className="footer__link">🕐 11 AM – 11 PM Daily</span></li>

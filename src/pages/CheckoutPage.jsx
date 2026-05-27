@@ -305,6 +305,24 @@ export default function CheckoutPage() {
                   Use Current Location
                 </button>
               </div>
+              <div style={{ 
+                background: 'var(--clr-surface-2)', 
+                border: '1px solid var(--clr-border)', 
+                borderRadius: 'var(--radius-md)', 
+                padding: '12px 16px', 
+                marginBottom: 'var(--space-md)',
+                fontSize: '0.85rem',
+                color: 'var(--clr-text-muted)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span style={{ fontSize: '1.1rem' }}>🏪</span>
+                <div>
+                  Preparing fresh from: <strong>MSR Rayalaseema Ruchulu (Podili)</strong> · <a href="https://www.google.com/maps/search/?api=1&query=15.6249,79.6227" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none' }}>View on Google Maps</a>
+                </div>
+              </div>
+
               <div className="form-group">
                 <label className="form-label" htmlFor="delivery-address">Full delivery address *</label>
                 <textarea

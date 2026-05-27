@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 
 const STEPS = ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered'];
 
-const RESTAURANT_LOCATION = { lat: 17.4334, lng: 78.3867 }; // MSR Rayalaseema Ruchulu (Hyderabad)
+const RESTAURANT_LOCATION = { lat: 15.6249, lng: 79.6227 }; // MSR Rayalaseema Ruchulu (Podili)
 
 const MAP_CONTAINER_STYLE = {
   width: '100%',
@@ -347,12 +347,28 @@ export default function OrderDetailPage() {
         </div>
 
         {/* Info Cards */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'var(--space-md)' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'var(--space-md)' }}>
           <div className="card" style={{ padding:'var(--space-lg)' }}>
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8, color:'var(--clr-primary)' }}>
               <MapPin size={16} /> <strong style={{ fontSize:'0.85rem' }}>Delivery Address</strong>
             </div>
             <p style={{ fontSize:'0.85rem', color:'var(--clr-text-muted)', lineHeight:1.6 }}>{order.delivery_address}</p>
+          </div>
+          <div className="card" style={{ padding:'var(--space-lg)' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8, color:'var(--clr-primary)' }}>
+              <span style={{ fontSize: '1rem' }}>🏪</span> <strong style={{ fontSize:'0.85rem' }}>Restaurant Location</strong>
+            </div>
+            <p style={{ fontSize:'0.85rem', color:'var(--clr-text-muted)', lineHeight:1.6 }}>
+              MSR Rayalaseema Ruchulu, Darsi Road, Podili<br />
+              <a 
+                href="https://www.google.com/maps/search/?api=1&query=15.6249,79.6227" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}
+              >
+                📍 View on Google Maps
+              </a>
+            </p>
           </div>
           <div className="card" style={{ padding:'var(--space-lg)' }}>
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8, color:'var(--clr-primary)' }}>
