@@ -86,6 +86,27 @@ export default function OrderDetailPage() {
     }
   };
 
+  const shareBillOnWhatsApp = () => {
+    const itemsList = order.items?.map(item => `- ${item.quantity}x ${item.item_name} (₹${(parseFloat(item.item_price) * item.quantity).toFixed(0)})`).join('\n') || '';
+    const subtotal = order.items?.reduce((acc, item) => acc + (parseFloat(item.item_price) * item.quantity), 0) || 0;
+    const tax = Math.round(subtotal * 0.05);
+    const grandTotal = parseFloat(order.total_amount);
+    const paymentDisplay = order.payment_method === 'cod' ? 'Cash on Delivery' : 'Online (Paid)';
+    
+    const text = `*MSR Rayalaseema Ruchulu* 🍛\n*Bill Receipt - Order #${order.id}*\n\n` +
+      `*Items Summary:*\n${itemsList}\n\n` +
+      `*Subtotal:* ₹${subtotal.toFixed(2)}\n` +
+      `*GST (5%):* ₹${tax.toFixed(2)}\n` +
+      `*Delivery Fee:* FREE\n` +
+      `*Grand Total:* ₹${grandTotal.toFixed(2)}\n\n` +
+      `*Payment Method:* ${paymentDisplay}\n` +
+      `*Address:* ${order.delivery_address}\n\n` +
+      `Thank you for ordering with MSR Rayalaseema Ruchulu! 🛵`;
+
+    const encodedText = encodeURIComponent(text);
+    window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+  };
+
   const renderStars = (rating, setRating) => (
     <div style={{ display: 'flex', gap: '4px' }}>
       {[1, 2, 3, 4, 5].map(star => (
@@ -104,9 +125,30 @@ export default function OrderDetailPage() {
   return (
     <div className="section">
       <div className="container" style={{ maxWidth:700 }}>
-        <Link to="/orders" className="btn btn-ghost btn-sm" style={{ marginBottom:'var(--space-lg)', display:'inline-flex' }}>
-          <ArrowLeft size={16} /> Back to Orders
-        </Link>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap: 'wrap', gap: '10px', marginBottom:'var(--space-lg)' }}>
+          <Link to="/orders" className="btn btn-ghost btn-sm" style={{ display:'inline-flex' }}>
+            <ArrowLeft size={16} /> Back to Orders
+          </Link>
+          <button 
+            onClick={shareBillOnWhatsApp}
+            className="btn btn-outline btn-sm"
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px', 
+              borderColor: '#25D366', 
+              color: '#25D366', 
+              background: 'rgba(37, 211, 102, 0.05)',
+              padding: '6px 12px',
+              fontSize: '0.8rem',
+              borderRadius: '20px',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            <MessageCircle size={14} color="#25D366" /> Share Bill on WhatsApp
+          </button>
+        </div>
 
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'var(--space-xl)' }}>
           <div>
