@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { MapPin, FileText, FlaskConical, Crosshair } from 'lucide-react';
 import { useJsApiLoader, GoogleMap, Marker } from '@react-google-maps/api';
@@ -10,6 +10,23 @@ import toast from 'react-hot-toast';
 import SuccessOverlay from '../components/SuccessOverlay';
 
 const IS_DEV = import.meta.env.DEV; // true when running `npm run dev`
+
+const RESTAURANT_LAT = 15.6249768;
+const RESTAURANT_LNG = 79.6233953;
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 const MAP_CONTAINER_STYLE = {
   width: '100%',
@@ -26,6 +43,8 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState(user?.address || '');
   const [deliveryLat, setDeliveryLat] = useState(null);
   const [deliveryLng, setDeliveryLng] = useState(null);
+  const [distance, setDistance] = useState(null);
+  const [isEligible, setIsEligible] = useState(true);
   const [detecting, setDetecting] = useState(false);
   
   const [notes, setNotes] = useState('');
@@ -35,6 +54,17 @@ export default function CheckoutPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [successOrderId, setSuccessOrderId] = useState(null);
+
+  useEffect(() => {
+    if (deliveryLat && deliveryLng) {
+      const dist = calculateDistance(RESTAURANT_LAT, RESTAURANT_LNG, deliveryLat, deliveryLng);
+      setDistance(dist);
+      setIsEligible(dist <= 10.0);
+    } else {
+      setDistance(null);
+      setIsEligible(true);
+    }
+  }, [deliveryLat, deliveryLng]);
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -87,6 +117,14 @@ export default function CheckoutPage() {
     if (!address.trim()) { toast.error('Please enter a delivery address'); return false; }
     if (!user) { toast.error('Please login to place an order'); navigate('/login'); return false; }
     if (items.length === 0) { toast.error('Your cart is empty'); return false; }
+    if (deliveryLat === null || deliveryLng === null) {
+      toast.error('Please detect or confirm your delivery location on the map to verify delivery eligibility.');
+      return false;
+    }
+    if (distance > 10.0) {
+      toast.error(`We do not deliver to this location. Delivery is only available within 10 km. (Your distance: ${distance.toFixed(2)} km)`);
+      return false;
+    }
     return true;
   };
 
@@ -322,6 +360,113 @@ export default function CheckoutPage() {
                   Preparing fresh from: <strong>MSR Rayalaseema Ruchulu (Podili)</strong> · <a href="https://maps.app.goo.gl/x47GgBFFouqvA1Bt6" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none' }}>View on Google Maps</a>
                 </div>
               </div>
+
+              {distance === null ? (
+                <div style={{
+                  background: 'rgba(255, 107, 53, 0.05)',
+                  border: '1px dashed var(--clr-primary)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '12px 16px',
+                  marginBottom: 'var(--space-md)',
+                  fontSize: '0.85rem',
+                  color: 'var(--clr-text)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  <span style={{ fontSize: '1.2rem' }}>📍</span>
+                  <div>
+                    Please click <strong>Use Current Location</strong> or adjust the pin on the map below to verify delivery eligibility.
+                  </div>
+                </div>
+              ) : distance <= 1.0 ? (
+                <div style={{
+                  background: 'rgba(6, 214, 160, 0.08)',
+                  border: '1px solid rgba(6, 214, 160, 0.3)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '14px 16px',
+                  marginBottom: 'var(--space-md)',
+                  fontSize: '0.88rem',
+                  color: '#06d6a0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  boxShadow: '0 2px 8px rgba(6, 214, 160, 0.05)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+                    <span>⚡ Within 1 km: We provide service!</span>
+                    <span style={{
+                      background: '#06d6a0',
+                      color: '#1a1a2e',
+                      fontSize: '0.7rem',
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontWeight: 800
+                    }}>EXPRESS DELIVERY</span>
+                  </div>
+                  <div style={{ color: 'var(--clr-text-muted)', fontSize: '0.82rem' }}>
+                    Great news! You are only <strong>{distance.toFixed(2)} km</strong> away. We provide direct and rapid delivery to this location.
+                  </div>
+                </div>
+              ) : distance <= 10.0 ? (
+                <div style={{
+                  background: 'rgba(26, 115, 232, 0.08)',
+                  border: '1px solid rgba(26, 115, 232, 0.3)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '14px 16px',
+                  marginBottom: 'var(--space-md)',
+                  fontSize: '0.88rem',
+                  color: '#1a73e8',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  boxShadow: '0 2px 8px rgba(26, 115, 232, 0.05)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+                    <span>🛵 Delivery Available!</span>
+                    <span style={{
+                      background: '#1a73e8',
+                      color: 'white',
+                      fontSize: '0.7rem',
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontWeight: 800
+                    }}>STANDARD ZONE</span>
+                  </div>
+                  <div style={{ color: 'var(--clr-text-muted)', fontSize: '0.82rem' }}>
+                    You are within our delivery area! Distance: <strong>{distance.toFixed(2)} km</strong>. Preparing to deliver hot and fresh.
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  background: 'rgba(239, 71, 111, 0.08)',
+                  border: '1px solid rgba(239, 71, 111, 0.3)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '14px 16px',
+                  marginBottom: 'var(--space-md)',
+                  fontSize: '0.88rem',
+                  color: '#ef476f',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                  boxShadow: '0 2px 8px rgba(239, 71, 111, 0.05)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700 }}>
+                    <span>❌ Out of Delivery Zone</span>
+                    <span style={{
+                      background: '#ef476f',
+                      color: 'white',
+                      fontSize: '0.7rem',
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontWeight: 800
+                    }}>BLOCKED</span>
+                  </div>
+                  <div style={{ color: 'var(--clr-text-muted)', fontSize: '0.82rem' }}>
+                    Sorry, we do not deliver to this location. We only deliver within 10 km from MSR Rayalaseema Ruchulu. (Your distance: <strong>{distance.toFixed(2)} km</strong>)
+                  </div>
+                </div>
+              )}
 
               <div className="form-group">
                 <label className="form-label" htmlFor="delivery-address">Full delivery address *</label>
@@ -619,15 +764,23 @@ export default function CheckoutPage() {
               {/* ── Checkout Button ── */}
               <button
                 className="btn btn-primary w-full"
-                style={{ marginTop: 'var(--space-md)', padding: '1rem' }}
+                style={{ 
+                  marginTop: 'var(--space-md)', 
+                  padding: '1rem',
+                  opacity: (!isEligible && distance !== null) ? 0.6 : 1,
+                  cursor: (!isEligible && distance !== null) ? 'not-allowed' : 'pointer'
+                }}
                 onClick={handlePayment}
-                disabled={loading}
+                disabled={loading || (!isEligible && distance !== null)}
                 id="pay-now-btn"
               >
-                {loading
-                  ? <><div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Processing...</>
-                  : paymentMethod !== 'cod' ? <>🔒 Pay ₹{grandTotal.toFixed(2)} Securely</> : <>🛵 Confirm Order (COD)</>
-                }
+                {(!isEligible && distance !== null) ? (
+                  <>❌ Outside 10 KM Delivery Area</>
+                ) : loading ? (
+                  <><div className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} /> Processing...</>
+                ) : (
+                  paymentMethod !== 'cod' ? <>🔒 Pay ₹{grandTotal.toFixed(2)} Securely</> : <>🛵 Confirm Order (COD)</>
+                )}
               </button>
 
               {paymentMethod !== 'cod' && (
