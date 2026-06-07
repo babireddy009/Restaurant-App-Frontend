@@ -41,6 +41,7 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [address, setAddress] = useState(user?.address || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [deliveryLat, setDeliveryLat] = useState(null);
   const [deliveryLng, setDeliveryLng] = useState(null);
   const [distance, setDistance] = useState(null);
@@ -115,6 +116,22 @@ export default function CheckoutPage() {
   // ─── Validate common fields before any payment ────────────────────────────
   const validate = () => {
     if (!address.trim()) { toast.error('Please enter a delivery address'); return false; }
+    if (!phone.trim()) { toast.error('Please enter a mobile number'); return false; }
+    
+    // Clean and validate Indian mobile number
+    const cleanPhone = phone.replace(/\D/g, '');
+    let mainNumber = cleanPhone;
+    if (cleanPhone.startsWith('91') && cleanPhone.length === 12) {
+      mainNumber = cleanPhone.slice(2);
+    } else if (cleanPhone.startsWith('0') && cleanPhone.length === 11) {
+      mainNumber = cleanPhone.slice(1);
+    }
+    
+    if (mainNumber.length !== 10 || !['6', '7', '8', '9'].includes(mainNumber[0])) {
+      toast.error('Please enter a valid 10-digit Indian mobile number (e.g. 9876543210)');
+      return false;
+    }
+
     if (!user) { toast.error('Please login to place an order'); navigate('/login'); return false; }
     if (items.length === 0) { toast.error('Your cart is empty'); return false; }
     if (deliveryLat === null || deliveryLng === null) {
@@ -145,6 +162,7 @@ export default function CheckoutPage() {
       const payload = {
         items: cartPayload,
         delivery_address: address,
+        delivery_phone: phone,
         notes,
         payment_method: paymentMethod === 'cod' ? 'cod' : 'online',
       };
@@ -478,6 +496,22 @@ export default function CheckoutPage() {
                   onChange={e => setAddress(e.target.value)}
                   rows={4}
                 />
+
+                <div style={{ marginTop: 'var(--space-md)' }}>
+                  <label className="form-label" htmlFor="delivery-phone">Mobile Number *</label>
+                  <input
+                    id="delivery-phone"
+                    type="tel"
+                    className="form-input"
+                    placeholder="Enter 10-digit mobile number (e.g., 9876543210)"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    required
+                  />
+                  <span style={{ fontSize: '0.72rem', color: 'var(--clr-text-faint)', marginTop: 4, display: 'block' }}>
+                    Required for delivery contact. Valid Indian mobile format.
+                  </span>
+                </div>
                 
                 {deliveryLat && deliveryLng && isLoaded && (
                   <div style={{ marginTop: 'var(--space-md)' }}>
