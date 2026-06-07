@@ -4,7 +4,7 @@ import { MapPin, Phone, MessageCircle, CheckCircle, ArrowRight } from 'lucide-re
 import toast from 'react-hot-toast';
 import DeliveryChat from '../components/DeliveryChat';
 
-import { getDriverOrderView, confirmDelivery } from '../api/endpoints';
+import { getDriverOrderView, confirmDelivery, updateDriverLocation } from '../api/endpoints';
 
 export default function DriverPortal() {
   const { id } = useParams();
@@ -26,6 +26,42 @@ export default function DriverPortal() {
       .catch(err => console.error(err))
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    if (!order || order.status === 'delivered') return;
+
+    let watchId = null;
+
+    if (navigator.geolocation) {
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          
+          updateDriverLocation(id, { driver_lat: lat, driver_lng: lng })
+            .then(() => {
+              console.log("Driver location updated:", lat, lng);
+            })
+            .catch((err) => {
+              console.warn("Failed to update driver location:", err);
+            });
+        },
+        (error) => {
+          console.warn("Error getting driver location:", error);
+          toast.error("Location tracking error. Please ensure GPS/Location access is enabled for delivery tracking.", { id: 'gps-error' });
+        },
+        { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+      );
+    } else {
+      toast.error("Geolocation is not supported by your browser. Live tracking is disabled.");
+    }
+
+    return () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [order?.status, id]);
 
   const handleOtpChange = (index, value) => {
     if (isNaN(value)) return;

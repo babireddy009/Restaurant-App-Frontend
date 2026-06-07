@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 
 const STEPS = ['pending', 'confirmed', 'preparing', 'ready', 'out_for_delivery', 'delivered'];
 
-const RESTAURANT_LOCATION = { lat: 15.625224761297483, lng: 79.62384590419613 }; // MSR Rayalaseema Ruchulu (Podili)
+const RESTAURANT_LOCATION = { lat: 15.6249768, lng: 79.6233953 }; // MSR Rayalaseema Ruchulu (Podili)
 
 const MAP_CONTAINER_STYLE = {
   width: '100%',

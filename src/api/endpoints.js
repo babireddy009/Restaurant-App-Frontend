@@ -41,4 +41,5 @@ export const confirmDelivery = (id, otp) => api.post(`/orders/${id}/confirm-deli
 export const submitReview = (id, data) => api.post(`/orders/${id}/review/`, data);
 export const getAnalytics = () => api.get('/orders/analytics/');
 export const cancelOrder = (id) => api.post(`/orders/${id}/cancel/`);
+export const updateDriverLocation = (id, data) => api.patch(`/orders/${id}/driver-location/`, data);
 
