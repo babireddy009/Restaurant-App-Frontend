@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MapPin, Phone, MessageCircle, CheckCircle, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -15,10 +15,15 @@ export default function DriverPortal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  // Note: For this demo, we're assuming the driver is accessing this view via a direct link.
-  // We'll use the public endpoints to get the order details.
+  // Simulation State
+  const [simulating, setSimulating] = useState(false);
+  const [simLat, setSimLat] = useState(0);
+  const [simLng, setSimLng] = useState(0);
+  const [simStep, setSimStep] = useState(0);
+  const simIntervalRef = useRef(null);
+
+  // Fetch order details via the public driver view endpoint
   useEffect(() => {
-    // Fetch order details via the public driver view endpoint
     getDriverOrderView(id)
       .then(res => {
         setOrder(res.data);
@@ -27,8 +32,9 @@ export default function DriverPortal() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  // Real GPS Geolocation Watcher
   useEffect(() => {
-    if (!order || order.status === 'delivered') return;
+    if (!order || order.status === 'delivered' || simulating) return;
 
     let watchId = null;
 
@@ -61,7 +67,75 @@ export default function DriverPortal() {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, [order?.status, id]);
+  }, [order?.status, id, simulating]);
+
+  // Start Simulation Route
+  const startSimulation = () => {
+    if (!order) return;
+    
+    // Set starting position at the restaurant (MSR Rayalaseema Ruchulu)
+    let currentLat = 15.6249768;
+    let currentLng = 79.6233953;
+    
+    // Destination: Customer's delivery location (or fallback to town center)
+    const destLat = order.delivery_lat || 15.625;
+    const destLng = order.delivery_lng || 79.623;
+    
+    setSimulating(true);
+    setSimLat(currentLat);
+    setSimLng(currentLng);
+    setSimStep(0);
+    
+    const totalSteps = 20;
+    const dLat = (destLat - currentLat) / totalSteps;
+    const dLng = (destLng - currentLng) / totalSteps;
+    
+    let stepCount = 0;
+    
+    if (simIntervalRef.current) {
+      clearInterval(simIntervalRef.current);
+    }
+    
+    simIntervalRef.current = setInterval(() => {
+      stepCount += 1;
+      currentLat += dLat;
+      currentLng += dLng;
+      
+      setSimLat(currentLat);
+      setSimLng(currentLng);
+      setSimStep(stepCount);
+      
+      updateDriverLocation(id, { driver_lat: currentLat, driver_lng: currentLng })
+        .then(() => {
+          console.log(`Simulation Step ${stepCount}/${totalSteps}:`, currentLat, currentLng);
+        })
+        .catch(err => console.warn("Sim location update failed", err));
+        
+      if (stepCount >= totalSteps) {
+        clearInterval(simIntervalRef.current);
+        setSimulating(false);
+        toast.success("Simulation complete! Driver has arrived at destination.", { icon: '🏁', duration: 5000 });
+      }
+    }, 3000); // Step every 3s
+  };
+
+  // Stop Simulation Route
+  const stopSimulation = () => {
+    if (simIntervalRef.current) {
+      clearInterval(simIntervalRef.current);
+    }
+    setSimulating(false);
+    toast('Simulation stopped.', { icon: '🛑' });
+  };
+
+  // Cleanup simulation interval on unmount
+  useEffect(() => {
+    return () => {
+      if (simIntervalRef.current) {
+        clearInterval(simIntervalRef.current);
+      }
+    };
+  }, []);
 
   const handleOtpChange = (index, value) => {
     if (isNaN(value)) return;
@@ -131,6 +205,48 @@ export default function DriverPortal() {
           </div>
         ) : (
           <>
+            {/* Developer Simulator */}
+            <div className="card" style={{ 
+              padding: 'var(--space-lg)', 
+              marginBottom: 'var(--space-lg)',
+              border: '1.5px dashed var(--clr-primary)',
+              background: 'rgba(255, 107, 53, 0.03)'
+            }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>🛠️</span> Dev Simulator
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: 'var(--clr-text-muted)', marginBottom: '14px' }}>
+                Simulate driver movement along the route to check the live tracking map in the customer app.
+              </p>
+              
+              {simulating ? (
+                <div style={{ textAlign: 'center', padding: '10px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: 700, color: 'var(--clr-primary)' }}>
+                    <div className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
+                    Simulating Route... Step {simStep}/20
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--clr-text-faint)', marginTop: '6px' }}>
+                    Current Coord: ({simLat.toFixed(5)}, {simLng.toFixed(5)})
+                  </div>
+                  <button 
+                    onClick={stopSimulation} 
+                    className="btn btn-outline btn-sm" 
+                    style={{ marginTop: '10px', borderRadius: '20px', borderColor: 'var(--clr-danger)', color: 'var(--clr-danger)' }}
+                  >
+                    Stop Simulation
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={startSimulation} 
+                  className="btn btn-outline w-full" 
+                  style={{ borderRadius: '20px', padding: '10px', cursor: 'pointer', border: '1px solid var(--clr-primary)', color: 'var(--clr-primary)' }}
+                >
+                  🚀 Run Driver Route Simulation
+                </button>
+              )}
+            </div>
+
             {/* Delivery Details */}
             <div className="card" style={{ padding: 'var(--space-lg)', marginBottom: 'var(--space-lg)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--clr-primary)', marginBottom: '12px' }}>
